@@ -1,0 +1,39 @@
+definitions:
+  name: A solution preparation schema
+  sections:
+    SolutionPreparation:
+      base_sections:
+        - nomad.datamodel.data.EntryData
+      quantities:
+        temperature:
+          type: float
+          description: The temperature at which the solution was prepared
+          units: Celsius
+        atmosphere:
+          type: str
+          description: The atmosphere in which the solution was prepared
+        method:
+          type: str
+          description: The method used to prepare the solution
+        time:
+          type: float
+          description: The time for which the solution was prepared
+          units: minutes
+        solutes:
+          type: str
+          description: The solutes in the solution
+          shape: ['*']
+        solute_masses:
+          type: float
+          description: The masses of the solutes in the solution
+          shape: ['*']
+          units: milligrams
+        solvents:
+          type: str
+          description: The solvents in the solution
+          shape: ['*']
+        solvent_volumes:
+          type: float
+          description: The volumes of the solvents in the solution
+          shape: ['*']
+          units: milliliters
