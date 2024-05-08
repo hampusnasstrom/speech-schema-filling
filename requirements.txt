@@ -5,6 +5,6 @@ pydantic
 SpeechRecognition
 pygame
 gtts
-whisper
+openai-whisper
 torch
 pydub

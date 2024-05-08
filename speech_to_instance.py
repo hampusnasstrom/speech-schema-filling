@@ -5,7 +5,7 @@ import speech_recognition as sr
 import whisper
 import torch
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from queue import Queue
 from tempfile import NamedTemporaryFile
 from time import sleep
@@ -14,7 +14,6 @@ from sys import platform
 from pygame import mixer
 from gtts import gTTS
 import time
-import os
 
 if os.name == "posix":
     from pydub import AudioSegment
@@ -23,7 +22,7 @@ import json
 from langchain_experimental.llms.ollama_functions import OllamaFunctions
 from langchain_core.prompts import PromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage  # noqa: F401
 from typing import List
 
 model = OllamaFunctions(model="llama3:70b", base_url='http://172.28.105.30/backend', format='json')
@@ -167,10 +166,6 @@ def main():
                                  "Run this with 'list' to view available Microphones.", type=str)
     args = parser.parse_args()
 
-    # The last time a recording was retrieved from the queue.
-    phrase_time = None
-    # Current raw audio bytes.
-    last_sample = bytes()
     # Thread safe Queue for passing data from the threaded recording callback.
     data_queue = Queue()
     # We use SpeechRecognizer to record our audio because it has a nice feature where it can detect when speech ends.
@@ -202,11 +197,9 @@ def main():
         model = model + ".en"
     audio_model = whisper.load_model(model)
 
-    record_timeout = args.record_timeout
     phrase_timeout = args.phrase_timeout
 
     temp_file = NamedTemporaryFile().name
-    transcription = ['']
 
     # with source:
     #     recorder.adjust_for_ambient_noise(source)
@@ -251,9 +244,9 @@ def main():
             if text.lower().startswith("stop"):
                 break
             print(text)
-            messages.append({"role": "user", "content": text})
-            print(messages)
-            chat_response = chain.invoke(messages)
+            # messages.append({"role": "user", "content": text})
+            # print(messages)
+            chat_response = chain.invoke(text)
             assistant_message = chat_response #.json()["choices"][0]["message"]  # Attempt to Port to new API 
             print(assistant_message)
             messages.append(assistant_message)
