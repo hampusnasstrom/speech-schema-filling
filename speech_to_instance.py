@@ -55,7 +55,7 @@ def create_solution_entry(temperature, atmosphere, method, time, solutes, solute
                 {"chemical_2": {"name": a}, "chemical_mass": m} for a, m in zip(addititives, addititives_masses)
             ]
         }
-    })
+    }, indent=2)
 
 
 # define function structure in pydantic
