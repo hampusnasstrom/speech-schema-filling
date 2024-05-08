@@ -254,14 +254,14 @@ def main():
             messages.append({"role": "user", "content": text})
             print(messages)
             chat_response = chain.invoke(messages)
-            assistant_message = chat_response.json()["choices"][0]["message"]  # TODO: Port to new API 
+            assistant_message = chat_response #.json()["choices"][0]["message"]  # Attempt to Port to new API 
             print(assistant_message)
             messages.append(assistant_message)
-            if assistant_message["content"]:
-                say(assistant_message["content"])
-            elif "function_call" in assistant_message:
+            # if assistant_message["content"]:
+            #     say(assistant_message["content"])
+            if "function_call" in assistant_message.additional_kwargs:
                 say("The assistant is happy, if you want it to repeat or ask if something is missing, please say so.")
-                res = create_solution_entry(**json.loads(assistant_message["function_call"]["arguments"]))
+                res = create_solution_entry(**json.loads(assistant_message.additional_kwargs["function_call"]["arguments"]))
                 with open("solution.archive.json", "w") as outfile:
                     outfile.write(res)
 
