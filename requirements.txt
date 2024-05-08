@@ -2,3 +2,9 @@ langchain-core
 langchain-community
 langchain-experimental
 pydantic
+SpeechRecognition
+pygame
+gtts
+whisper
+torch
+pydub
