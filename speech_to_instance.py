@@ -30,39 +30,7 @@ from typing import List
 
 model = OllamaFunctions(model="llama3:70b", base_url='http://172.28.105.30/backend', format='json')
 
-
-def create_solution_entry(temperature, atmosphere, method, time, solutes, solute_masses, solvents, solvent_volumes,
-                          addititives=[], addititives_masses=[]):
-    print(solutes)
-    print(solute_masses)
-
-    return json.dumps({
-        "data": {
-            "m_def": "hysprint_s.HySprint_Solution",
-            "name": "test solution",
-            "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
-            "solute": [
-                {"chemical_mass": m, "chemical_2": {"name": s}} for s, m in zip(solutes, solute_masses)
-            ],
-            "solvent": [
-                {"chemical_volume": v,
-                    "chemical_2": {"name": s}} for s, v in zip(solvents, solvent_volumes)
-            ],
-            "preparation": {
-                "atmosphere": atmosphere,
-                "method": method,
-                "temperature": temperature,
-                "time": time
-            },
-            "additive": [
-                {"chemical_2": {"name": a}, "chemical_mass": m} for a, m in zip(addititives, addititives_masses)
-            ]
-        }
-    }, indent=2)
-
-
 # define function structure in pydantic
-
 
 class Solution(BaseModel):
     temperature: float = Field(
