@@ -1,4 +1,4 @@
-# LLM Hackathon for Materials and Chemistry 2024 - Audio Documentation and ELN Structured Data Entry
+# Speech to ELN Structured Data Entry
 
 <p align="center">
   <img src="https://github.com/hampusnasstrom/speech-schema-filling/assets/64071335/e28e1156-ac53-4212-bc1a-d211106211b9">
