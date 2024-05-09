@@ -8,3 +8,4 @@ gtts
 openai-whisper
 torch
 pydub
+pyaudio
