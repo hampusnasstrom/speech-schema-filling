@@ -27,39 +27,7 @@ from typing import List
 
 model = OllamaFunctions(model="llama3:70b", base_url='http://172.28.105.30/backend', format='json')
 
-
-def create_solution_entry(temperature, atmosphere, method, time, solutes, solute_masses, solvents, solvent_volumes,
-                          addititives=[], addititives_masses=[]):
-    print(solutes)
-    print(solute_masses)
-
-    return json.dumps({
-        "data": {
-            "m_def": "hysprint_s.HySprint_Solution",
-            "name": "test solution",
-            "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
-            "solute": [
-                {"chemical_mass": m, "chemical_2": {"name": s}} for s, m in zip(solutes, solute_masses)
-            ],
-            "solvent": [
-                {"chemical_volume": v,
-                    "chemical_2": {"name": s}} for s, v in zip(solvents, solvent_volumes)
-            ],
-            "preparation": {
-                "atmosphere": atmosphere,
-                "method": method,
-                "temperature": temperature,
-                "time": time
-            },
-            "additive": [
-                {"chemical_2": {"name": a}, "chemical_mass": m} for a, m in zip(addititives, addititives_masses)
-            ]
-        }
-    }, indent=2)
-
-
 # define function structure in pydantic
-
 
 class Solution(BaseModel):
     temperature: float = Field(
@@ -83,7 +51,7 @@ class Scaling(BaseModel):
     powder: str = Field(
         ..., description="The name of the powder to be scaled")
     mass: float = Field(
-        ..., description="The scaled mass of the powder")
+        ..., description="The scaled mass of the powder in milligrams")
 
 prompt = PromptTemplate.from_template(
     """
@@ -114,7 +82,6 @@ model = model.bind_tools(
 chain = prompt | model
 
 # PART 1
-
 
 def say(text, filename="temp.mp3", delete_audio_file=True, language="en", slow=False):
     # PART 2
@@ -254,7 +221,6 @@ def main():
             #     say(assistant_message["content"])
             if "function_call" in assistant_message.additional_kwargs:
                 say("The assistant is happy, if you want it to repeat or ask if something is missing, please say so.")
-                # res = create_solution_entry(**json.loads(assistant_message.additional_kwargs["function_call"]["arguments"]))
                 res = json.loads(assistant_message.additional_kwargs["function_call"]["arguments"])
                 schema = assistant_message.additional_kwargs["function_call"]["name"]
                 res["m_def"] = "../upload/raw/nomad_schema.archive.yaml#"+schema

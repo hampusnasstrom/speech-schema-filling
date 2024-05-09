@@ -1,5 +1,5 @@
 definitions:
-  name: A solution preparation schema
+  name: Sample preparation schemas
   sections:
     SolutionPreparation:
       base_sections:
@@ -38,10 +38,13 @@ definitions:
           shape: ['*']
           units: milliliters
     PowderScaling:
+      base_sections:
+        - nomad.datamodel.data.EntryData
       quantities:
         powder: 
           type: str
           description: The name of the powder to be scaled
         mass: 
           type: float
-          description: The scaled mass of the powder
+          description: The scaled mass of the powder in milligrams
+          unit: milligrams

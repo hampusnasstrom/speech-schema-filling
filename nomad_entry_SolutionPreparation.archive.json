@@ -1,19 +1,21 @@
 {
   "data": {
     "temperature": 25,
-    "atmosphere": "inert",
+    "atmosphere": "air",
     "method": null,
-    "time": 45,
+    "time": 15,
     "solutes": [
-      "copper chloride",
-      "iron oxide"
+      "lead iodide"
     ],
     "solute_masses": [
-      3,
-      5
+      2
     ],
-    "solvents": null,
-    "solvent_volumes": null,
+    "solvents": [
+      "ethanol"
+    ],
+    "solvent_volumes": [
+      100
+    ],
     "m_def": "../upload/raw/nomad_schema.archive.yaml#SolutionPreparation"
   }
 }
