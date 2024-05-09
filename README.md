@@ -32,11 +32,13 @@ An example notebook demonstrating the conversion from the extracted text from th
 
 ## Dependencies
 
-The project depends on several Python libraries, including [`speech_recognition`](https://github.com/Uberi/speech_recognition#readme), [`whisper`](https://github.com/openai/whisper), [`langchain`](https://github.com/langchain-ai/langchain),  [`pygame`](https://github.com/pygame/pygame), `gtts`, and [`pydub`](https://github.com/jiaaro/pydub). These can be installed using the requirements file:
+The project depends on several Python libraries, including [`speech_recognition`](https://github.com/Uberi/speech_recognition#readme), [`whisper`](https://github.com/openai/whisper), [`langchain`](https://github.com/langchain-ai/langchain),  [`pygame`](https://github.com/pygame/pygame), `gtts`, and [`pydub`](https://github.com/jiaaro/pydub). It is recommended to create a virtual environment first. Then the dependencies can be installed using the requirements file:
 
 ```sh
 pip install -r requirements.txt
 ```
+
+Additionally make sure you have ffmpeg installed.
 
 ## Conclusion
 
