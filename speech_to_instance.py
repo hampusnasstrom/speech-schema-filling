@@ -1,6 +1,9 @@
 import argparse
 import io
 import os
+import sys
+import streamlit as st
+from audio_recorder_streamlit import audio_recorder
 import speech_recognition as sr
 import whisper
 import torch
@@ -22,7 +25,7 @@ import json
 from langchain_experimental.llms.ollama_functions import OllamaFunctions
 from langchain_core.prompts import PromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field
-from langchain_core.messages import HumanMessage  # noqa: F401
+#from langchain_core.messages import HumanMessage  # noqa: F401
 from typing import List
 
 model = OllamaFunctions(model="llama3:70b", base_url='http://172.28.105.30/backend', format='json')
@@ -99,12 +102,12 @@ AI:
 model = model.bind_tools(
     tools=[
         {
-            "name": "solution_preparation",
+            "name": "SolutionPreparation",
             "description": "Schema for solution preparation",
             "parameters": Solution.schema(),
         },
         {
-            "name": "powder_scaling",
+            "name": "PowderScaling",
             "description": "Schema for powder scaling",
             "parameters": Scaling.schema(),
         }
@@ -146,8 +149,27 @@ def say(text, filename="temp.mp3", delete_audio_file=True, language="en", slow=F
         os.remove(filename)
     print(f"audio file played for {seconds} seconds")
 
+def save_audio_file(audio_bytes, file_extension):
+    """
+    Save audio bytes to a file with the specified extension.
+
+    :param audio_bytes: Audio data in bytes
+    :param file_extension: The extension of the output audio file
+    :return: The name of the saved audio file
+    """
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_name = f"audio_{timestamp}.{file_extension}"
+
+    with open(file_name, "wb") as f:
+        f.write(audio_bytes)
+
+    return file_name
 
 def main():
+###setup streamline app ####
+    st.title("speech 2 schema")
+    tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="small", help="Model to use",
                         choices=["tiny", "base", "small", "medium", "large"])
@@ -223,52 +245,71 @@ def main():
     messages.append(
         {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."})
     print(phrase_timeout)
-    while True:
-        try:
-            with source:
-                audio = recorder.listen(source)
+    
+    with tab1:
+        if st.button("record preparation instruction"):
+        #audio_bytes = audio_recorder()
+        #while True:
+            try:
+                with source:
+                #st.audio(audio_bytes, format="audio/wav")
+                    audio = recorder.listen(source)
 
-            # Use AudioData to convert the raw data to wav data.
-            wav_data = io.BytesIO(audio.get_wav_data())
+                # Use AudioData to convert the raw data to wav data.
+                wav_data = io.BytesIO(audio.get_wav_data())
 
-            # Write wav data to the temporary file as bytes.
-            with open(temp_file, 'w+b') as f:
-                f.write(wav_data.read())
+                # Write wav data to the temporary file as bytes.
+                with open(temp_file, 'w+b') as f:
+                    f.write(wav_data.read())
+    
+                if st.button("Create json schema"):
+                # Read the transcription.
+                    print("now transcribing")
+                    result = audio_model.transcribe(temp_file, fp16=torch.cuda.is_available())
+                    text = result['text'].strip()
 
-            # Read the transcription.
-            result = audio_model.transcribe(temp_file, fp16=torch.cuda.is_available())
-            text = result['text'].strip()
+                    # If we detected a pause between recordings, add a new item to our transcription.
+                    # Otherwise edit the existing one.
+                    # if text.lower().startswith("stop"):
+                    #     break
+                    print(text)
+                    # messages.append({"role": "user", "content": text})
+                    # print(messages)
+                    chat_response = chain.invoke(text)
+                    assistant_message = chat_response #.json()["choices"][0]["message"]  # Attempt to Port to new API 
+                    print(assistant_message)
+                    messages.append(assistant_message)
+                    # if assistant_message["content"]:
+                    #     say(assistant_message["content"])
+                    if "function_call" in assistant_message.additional_kwargs:
+                        say("The assistant is happy, if you want it to repeat or ask if something is missing, please say so.")
+                        # res = create_solution_entry(**json.loads(assistant_message.additional_kwargs["function_call"]["arguments"]))
+                        res = json.loads(assistant_message.additional_kwargs["function_call"]["arguments"])
+                        schema = assistant_message.additional_kwargs["function_call"]["name"]
+                        res["m_def"] = "../upload/raw/nomad_schema.archive.yaml#"+schema #SolutionPreparation"
+                        timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+                        file_name = f"nomad_entry_{timestamp}.archive.json"
+                        with open(file_name, "w") as outfile:
+                            json.dump({"data": res}, outfile, indent=2)
 
-            # If we detected a pause between recordings, add a new item to our transcription.
-            # Otherwise edit the existing one.
-            if text.lower().startswith("stop"):
-                break
-            print(text)
-            # messages.append({"role": "user", "content": text})
-            # print(messages)
-            chat_response = chain.invoke(text)
-            assistant_message = chat_response #.json()["choices"][0]["message"]  # Attempt to Port to new API 
-            print(assistant_message)
-            messages.append(assistant_message)
-            # if assistant_message["content"]:
-            #     say(assistant_message["content"])
-            if "function_call" in assistant_message.additional_kwargs:
-                say("The assistant is happy, if you want it to repeat or ask if something is missing, please say so.")
-                # res = create_solution_entry(**json.loads(assistant_message.additional_kwargs["function_call"]["arguments"]))
-                res = json.loads(assistant_message.additional_kwargs["function_call"]["arguments"])
-                res["m_def"] = "../upload/raw/nomad_schema.archive.yaml#SolutionPreparation"
-                with open("solution.archive.json", "w") as outfile:
-                    json.dump({"data": res}, outfile, indent=2)
-                    # outfile.write(res)
+                    # Clear the console to reprint the updated transcription.
+                    os.system('cls' if os.name == 'nt' else 'clear')
 
-            # Clear the console to reprint the updated transcription.
-            os.system('cls' if os.name == 'nt' else 'clear')
+                    # Infinite loops are bad for processors, must sleep.
 
-            # Infinite loops are bad for processors, must sleep.
+                    sleep(0.25)
+            except KeyboardInterrupt:
+                pass
+    
+    with tab2:
+        audio_file = st.file_uploader("Upload Audio", type=["mp3", "mp4", "wav", "m4a"])
+        if audio_file:
+            file_extension = audio_file.type.split('/')[1]
+            save_audio_file(audio_file.read(), file_extension)
 
-            sleep(0.25)
-        except KeyboardInterrupt:
-            break
-
+if __name__ == "__main__":
+    # Set up the working directory
+    working_dir = os.path.dirname(os.path.abspath(__file__))
+    sys.path.append(working_dir)
 
 main()

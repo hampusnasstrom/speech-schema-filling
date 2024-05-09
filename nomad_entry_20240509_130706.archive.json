@@ -1,0 +1,23 @@
+{
+  "data": {
+    "temperature": 50,
+    "atmosphere": null,
+    "method": null,
+    "time": 0.5,
+    "solutes": [
+      "copper",
+      "iron"
+    ],
+    "solute_masses": [
+      5,
+      3
+    ],
+    "solvents": [
+      "aqua regia"
+    ],
+    "solvent_volumes": [
+      1000
+    ],
+    "m_def": "../upload/raw/nomad_schema.archive.yaml#SolutionPreparation"
+  }
+}

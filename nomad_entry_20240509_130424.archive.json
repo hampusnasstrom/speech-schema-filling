@@ -1,0 +1,17 @@
+{
+  "data": {
+    "temperature": null,
+    "atmosphere": null,
+    "method": null,
+    "time": null,
+    "solutes": [
+      "chloride"
+    ],
+    "solute_masses": [
+      5.34
+    ],
+    "solvents": null,
+    "solvent_volumes": null,
+    "m_def": "../upload/raw/nomad_schema.archive.yaml#SolutionPreparation"
+  }
+}

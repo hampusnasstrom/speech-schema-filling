@@ -1,0 +1,17 @@
+{
+  "data": {
+    "temperature": null,
+    "atmosphere": null,
+    "method": null,
+    "time": null,
+    "solutes": [],
+    "solute_masses": [],
+    "solvents": [
+      "ethanol"
+    ],
+    "solvent_volumes": [
+      3
+    ],
+    "m_def": "../upload/raw/nomad_schema.archive.yaml#SolutionPreparation"
+  }
+}
