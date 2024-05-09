@@ -38,7 +38,7 @@ The project depends on several Python libraries, including [`speech_recognition`
 pip install -r requirements.txt
 ```
 
-Additionally make sure you have ffmpeg installed.
+Additionally make sure you have ffmpeg installed. On Windows we recommend using the chocolately package manager to install ffmpeg.
 
 ## Conclusion
 
