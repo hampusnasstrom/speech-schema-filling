@@ -1,0 +1,19 @@
+{
+  "data": {
+    "temperature": 25,
+    "atmosphere": "inert",
+    "method": null,
+    "time": 45,
+    "solutes": [
+      "copper chloride",
+      "iron oxide"
+    ],
+    "solute_masses": [
+      3,
+      5
+    ],
+    "solvents": null,
+    "solvent_volumes": null,
+    "m_def": "../upload/raw/nomad_schema.archive.yaml#SolutionPreparation"
+  }
+}

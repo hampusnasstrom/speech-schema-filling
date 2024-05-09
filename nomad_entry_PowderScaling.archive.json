@@ -1,0 +1,7 @@
+{
+  "data": {
+    "powder": "iron oxide",
+    "mass": 3,
+    "m_def": "../upload/raw/nomad_schema.archive.yaml#PowderScaling"
+  }
+}

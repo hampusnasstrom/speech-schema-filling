@@ -99,12 +99,12 @@ AI:
 model = model.bind_tools(
     tools=[
         {
-            "name": "solution_preparation",
+            "name": "SolutionPreparation",
             "description": "Schema for solution preparation",
             "parameters": Solution.schema(),
         },
         {
-            "name": "powder_scaling",
+            "name": "PowderScaling",
             "description": "Schema for powder scaling",
             "parameters": Scaling.schema(),
         }
@@ -256,10 +256,11 @@ def main():
                 say("The assistant is happy, if you want it to repeat or ask if something is missing, please say so.")
                 # res = create_solution_entry(**json.loads(assistant_message.additional_kwargs["function_call"]["arguments"]))
                 res = json.loads(assistant_message.additional_kwargs["function_call"]["arguments"])
-                res["m_def"] = "../upload/raw/nomad_schema.archive.yaml#SolutionPreparation"
-                with open("solution.archive.json", "w") as outfile:
+                schema = assistant_message.additional_kwargs["function_call"]["name"]
+                res["m_def"] = "../upload/raw/nomad_schema.archive.yaml#"+schema
+                filename = "nomad_entry_"+schema+".archive.json"
+                with open(filename, "w") as outfile:
                     json.dump({"data": res}, outfile, indent=2)
-                    # outfile.write(res)
 
             # Clear the console to reprint the updated transcription.
             os.system('cls' if os.name == 'nt' else 'clear')
