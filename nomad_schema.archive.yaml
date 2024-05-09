@@ -37,3 +37,11 @@ definitions:
           description: The volumes of the solvents in the solution
           shape: ['*']
           units: milliliters
+    PowderScaling:
+      quantities:
+        powder: 
+          type: str
+          description: The name of the powder to be scaled
+        mass: 
+          type: float
+          description: The scaled mass of the powder
